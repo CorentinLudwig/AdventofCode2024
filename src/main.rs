@@ -1,4 +1,5 @@
 mod day2;
+mod day1;
 use std::env;
 
 fn main() {
@@ -17,7 +18,8 @@ fn main() {
     }
 
     match day {
-        |2 => println!("day 2 result: number of safe level = {}", day2::day2("input/inputDay2.txt")),
+        | 1 => day1::day1("input/inputDay1.txt"),
+        | 2 => day2::day2("input/inputDay2.txt"),
         | _ => panic!("this day is not impemented or don't exist: {}\n", day),
     }
 }

@@ -69,7 +69,7 @@ fn is_safe_level(numbers: &Vec<i32>, use_problem_dampler: bool) -> i32 {
 }
 
 
-pub fn day2(path_input: &str) -> i32 {
+pub fn day2(path_input: &str) {
     let file = match File::open(path_input) {
         // The `description` method of `io::Error` returns a string that describes the error
         Err(why) => panic!(
@@ -97,5 +97,6 @@ pub fn day2(path_input: &str) -> i32 {
             Err(why) => eprintln!("Error reading a line: {}", why), // Handle errors in reading lines
         }
     }
-    return safe_level;
+
+    println!("day 2 result: number of safe level = {}", safe_level);
 }

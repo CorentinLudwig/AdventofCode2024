@@ -1,5 +1,6 @@
 mod day2;
 mod day1;
+mod day3;
 use std::env;
 
 fn main() {
@@ -20,6 +21,7 @@ fn main() {
     match day {
         | 1 => day1::day1("input/inputDay1.txt"),
         | 2 => day2::day2("input/inputDay2.txt"),
+        | 3 => day3::day3("input/inputDay3.txt"),
         | _ => panic!("this day is not impemented or don't exist: {}\n", day),
     }
 }

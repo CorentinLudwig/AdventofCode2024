@@ -4,24 +4,31 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 
-fn problem_dampler(line: &Vec<i32>, bad_level: usize) -> bool {
-    let mut line_dampler = line.clone();
-    line_dampler.remove(bad_level);
+fn problem_dampler(line: &Vec<i32>, indices_to_try: &Vec<usize>) -> bool {
+    let mut is_safe = 0;
+    for index in indices_to_try {
+        let mut line_dampler = line.clone();
+        line_dampler.remove(*index);
+        is_safe = is_safe_level(&line_dampler, false);
+        if is_safe != 0 {
+            break; // Break out of the loop as soon as we find a safe state
+        }
+    }
 
-    let is_safe = is_safe_level(&line_dampler, false);
 
     return if is_safe == 1 { true } else { false };
 }
 
-fn is_safe_level(numbers: &Vec<i32>, use_problem_dampler: bool) -> i32 {
-    let size = numbers.len();
+fn is_safe_level(line: &Vec<i32>, use_problem_dampler: bool) -> i32 {
+    let size = line.len();
     let mut is_safe = true;
-    let is_increasing = if numbers[0] < numbers[1] { true } else { false };
+    let is_increasing = if line[0] < line[1] { true } else { false };
 
 
-    if numbers[0] == numbers[1] {
+    if line[0] == line[1] {
         if use_problem_dampler {
-            is_safe = problem_dampler(numbers, 0);
+            let indice_to_test = vec![0];
+            is_safe = problem_dampler(line, &indice_to_test);
             return if is_safe { 1 } else { 0 };
         } else {
             return 0;
@@ -30,32 +37,28 @@ fn is_safe_level(numbers: &Vec<i32>, use_problem_dampler: bool) -> i32 {
     }
 
     for i in 0..(size - 1) {
-        let test = numbers[i] - numbers[i + 1];
+        let test = line[i] - line[i + 1];
 
+
+        // test if the level is only increasing or decreasing
         if is_increasing && test > 0 || !is_increasing && test < 0 {
             if use_problem_dampler {
                 // Try different indices: i, i+1, 0, and 1
                 let indices_to_try = vec![i, i + 1, 0, 1];
-                for &index in &indices_to_try {
-                    is_safe = problem_dampler(numbers, index);
-                    if is_safe {
-                        break; // Break out of the loop as soon as we find a safe state
-                    }
+                    is_safe = problem_dampler(line, &indices_to_try);
+                } else {
+                    is_safe = false;
                 }
-            } else {
-                is_safe = false;
-            }
             if !is_safe {
                 break; // Exit the loop if the sequence is unsafe
             }
         }
 
+        //test if there is not too much difference beetween 2 level
         if test.abs() > 3 || test.abs() < 1 {
             if use_problem_dampler {
-                is_safe = problem_dampler(numbers, i);
-                if !is_safe {
-                    is_safe = problem_dampler(numbers, i + 1);
-                }
+                let indices_to_test = vec![i, i+1];
+                is_safe = problem_dampler(line, &indices_to_test);
             } else {
                 is_safe = false;
             }
@@ -73,7 +76,7 @@ pub fn day2(path_input: &str) {
     let file = match File::open(path_input) {
         // The `description` method of `io::Error` returns a string that describes the error
         Err(why) => panic!(
-            "couldn't open inputDay2.txt: {}",
+            "couldn't open {}: {}", path_input,
             <dyn Error>::to_string(&why)
         ),
         Ok(file) => file,

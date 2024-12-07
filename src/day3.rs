@@ -5,10 +5,11 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 fn read_file(path_input: &str) -> usize {
+    println!("{:?}",path_input);
     let file = match File::open(path_input) {
         // The `description` method of `io::Error` returns a string that describes the error
         Err(why) => panic!(
-            "couldn't open inputDay2.txt: {}",
+            "couldn't open {}: {}", path_input,
             <dyn Error>::to_string(&why)
         ),
         Ok(file) => file,
@@ -55,6 +56,7 @@ fn find_mul(l: &str, is_do: &mut bool) -> usize {
 }
 
 pub fn day3(path_input: &str) {
+    
     println!(
         "day 3 result: sum of multiplications = {}",
         read_file(path_input)

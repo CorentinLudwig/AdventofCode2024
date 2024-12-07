@@ -9,7 +9,7 @@ fn read_file(path_input: &str) -> (Vec<i32>, Vec<i32>) {
     let file = match File::open(path_input) {
         // The `description` method of `io::Error` returns a string that describes the error
         Err(why) => panic!(
-            "couldn't open inputDay2.txt: {}",
+            "couldn't open {}: {}", path_input,
             <dyn Error>::to_string(&why)
         ),
         Ok(file) => file,

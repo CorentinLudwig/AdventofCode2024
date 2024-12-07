@@ -9,7 +9,7 @@ fn read_file(path_input: &str) -> Vec<Vec<char>> {
     let file = match File::open(path_input) {
         // The `description` method of `io::Error` returns a string that describes the error
         Err(why) => panic!(
-            "couldn't open inputDay2.txt: {}",
+            "couldn't open {}: {}", path_input,
             <dyn Error>::to_string(&why)
         ),
         Ok(file) => file,
@@ -30,17 +30,20 @@ fn read_file(path_input: &str) -> Vec<Vec<char>> {
     return data;
 }
 
-fn search_xmas(file: &Vec<Vec<char>>, i: i32, j: i32, di: i32, dj: i32) -> bool {
-    for e in 1..XMAS.len() {
-        let i_test: usize = (i + e as i32 * di) as usize;
-        let j_test: usize = (j + e as i32 * dj) as usize;
+fn search_xmas(file: &Vec<Vec<char>>, i: i32, j: i32) -> bool {
+    for di in -1..2 {
+        for dj in -1..2 {
+            for e in 1..XMAS.len() {
+                let i_test: usize = (i + e as i32 * di) as usize;
+                let j_test: usize = (j + e as i32 * dj) as usize;
 
-        if i_test >= file.len() || j_test >= file[i_test].len() || file[i_test][j_test] != XMAS[e] {
-            return false;
-        }
-
-        if file[i_test][j_test] != XMAS[e] {
-            return false;
+                if i_test >= file.len()
+                    || j_test >= file[i_test].len()
+                    || file[i_test][j_test] != XMAS[e]
+                {
+                    return false;
+                }
+            }
         }
     }
     return true;
@@ -54,12 +57,8 @@ fn find_xmas(file: &Vec<Vec<char>>) -> usize {
     for i in 0..nb_ligne {
         for j in 0..nb_colone {
             if file[i][j] == 'X' {
-                for di in -1..2 {
-                    for dj in -1..2 {
-                        if search_xmas(&file, i as i32, j as i32, di, dj) {
-                            res += 1;
-                        }
-                    }
+                if search_xmas(&file, i as i32, j as i32) {
+                    res += 1;
                 }
             }
         }
@@ -78,27 +77,18 @@ fn find_x_mas(file: &Vec<Vec<char>>) -> usize {
         for j in 1..nb_colone - 1 {
             if file[i][j] == 'A' {
                 // Check diagonals for "X MAS" pattern
-                if file[i - 1][j - 1] == 'M' && file[i + 1][j + 1] == 'S' {
-                    if file[i + 1][j - 1] == 'M' && file[i - 1][j + 1] == 'S' {
+                if (file[i - 1][j - 1] == 'M' && file[i + 1][j + 1] == 'S')
+                    || (file[i - 1][j - 1] == 'S' && file[i + 1][j + 1] == 'M')
+                {
+                    if (file[i + 1][j - 1] == 'M' && file[i - 1][j + 1] == 'S')
+                        || (file[i - 1][j + 1] == 'M' && file[i + 1][j - 1] == 'S')
+                    {
                         res += 1;
-                        println!(" XMAX found to {},{}",i,j);
-                    } else if file[i - 1][j + 1] == 'M' && file[i + 1][j - 1] == 'S' {
-                        res += 1;
-                        println!(" XMAX found to {},{}",i,j);
-                    }
-                }
-                else if file[i - 1][j - 1] == 'S' && file[i + 1][j + 1] == 'M' {
-                        if file[i + 1][j - 1] == 'M' && file[i - 1][j + 1] == 'S' {
-                            res += 1;
-                            println!(" XMAX found to {},{}",i,j);
-                        } else if file[i - 1][j + 1] == 'M' && file[i + 1][j - 1] == 'S' {
-                            res += 1;
-                            println!(" XMAX found to {},{}",i,j);
-                        }
                     }
                 }
             }
         }
+    }
     return res;
 }
 
